@@ -1,0 +1,68 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\setlength{\parskip}{8pt}
+\setlength{\parindent}{0pt}
+\usepackage{titling}
+\setlength{\droptitle}{-1in}
+
+\usepackage{titlesec}
+\titlespacing\section{0pt}{0pt plus 4pt minus 4pt}{0pt plus 4pt minus 4pt}
+\titlespacing\subsection{0pt}{0pt plus 4pt minus 4pt}{0pt plus 4pt minus 4pt}
+\titlespacing\subsubsection{0pt}{0pt plus 4pt minus 4pt}{0pt plus 4pt minus 4pt}
+
+\title{SE101 Lab Project Proposal \vspace{-12pt}}
+\author{Ethan Guo, Atif Mahmud \hskip 5em 11 October 2018}
+\date{\vspace{-12pt}}
+
+\begin{document}
+\pagenumbering{gobble}
+
+\maketitle
+\vspace{-0.625in}
+
+\section*{Introduction}
+
+We aim to create a small mobile robot capable of playing pool.
+
+Ideally, the end goal will be a robot with a wheeled base that travels across the surface of the pool table to line up with the cue ball, then use a solenoid actuator to shoot the cue ball such that it hits another pool ball into a pocket. This will be accomplished with the help of a overhead camera mounted above the pool table. 
+
+\section*{Software}
+
+We will structure our software components into nodes, based loosely on the ROS paradigm. The computer vision node will take in camera input and use OpenCV to determine the position of the robot and pool balls. The robot control node, written in Python, will perform pathfinding, and send commands to move the robot. Finally, the user interface node, written using Angular will display the current board environment from the computer vision node and send REST requests to the robot control node to preform actions.
+
+\section*{Hardware}
+
+We will be using the following hardware (* denotes items we need to purchase):
+\begin{itemize}
+    \setlength{\itemsep}{0pt} %
+    \setlength{\parskip}{0pt} %
+    \setlength{\parsep}{0pt} %
+    \vspace{-0.125in}
+    \item Arduino Uno or Nano microcontroller
+    \item HC-05 Bluetooth Transceiver
+    \item Solenoid actuator to shoot cue balls *
+    \item $4 \times$ Robotshop gear motors or continuous servos *
+    \item $4 \times$ Robotshop omni wheels *
+    \item USB webcam *
+\end{itemize}
+
+\vspace{-8pt}
+Time-permitting, we would ideally like to design and fabricate a PCB to integrate all the circuitry.
+
+\section*{Challenges}
+
+On the software side, the biggest challenge will be in the computer vision task. This includes detecting and locating pool balls and the robot itself, and most critically, classifying striped vs. solid balls.
+Fortunately, the pool table is a relatively easy environment for computer vision tasks, since the background is a static solid colour, and the objects are a consistent size and shape and mostly solid colours.
+
+Another challenge will be writing the pathfinding and closed-loop control system to move the robot into the desired program, while navigating around obstacles (other pool balls).
+
+On the hardware side, we will most likely need to build the robot base and drive system from scratch, which will be time-consuming and will likely require plenty of troubleshooting.
+
+\section*{Prototype}
+
+We will be building this project as a evolutionary prototype. With so many different systems to integrate, we will be working in a horizontal paradigm. By the prototype demo day, we aim to have a working mobile base, very basic functionality in each of the three major software components (computer vision, robot control, user interface), and a functional skeleton for communication between the relevant nodes (including the hardware components).
+
+% https://github.com/patricklam/se101-f18/blob/master/lab/se101-lab-project.pdf
+
+\end{document}
