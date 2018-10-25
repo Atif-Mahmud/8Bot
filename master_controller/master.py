@@ -13,6 +13,9 @@ def on_connect(client, userdata, flags, rc):
     # System Subscription
     client.subscribe("$SYS/#")
 
+    # Environment Subscription
+    client.subscribe("CV_NODE/ENVIRONMENT")
+
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     print(msg.payload.decode("utf-8"))
