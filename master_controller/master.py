@@ -11,14 +11,17 @@ def on_connect(client, userdata, flags, rc):
     # reconnect then subscriptions will be renewed.
 
     # System Subscription
-    client.subscribe("$SYS/#")
+    #client.subscribe("$SYS/#")
 
     # Environment Subscription
     client.subscribe("CV_NODE/ENVIRONMENT")
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
-    print(msg.payload.decode("utf-8"))
+    if (msg.topic == "CV_NODE/ENVIRONMENT"):
+        print(msg.payload.decode("utf-8"))
+    else:
+        print("ERROR: unhandled mqtt topic")
 
 client = mqtt.Client()
 client.on_connect = on_connect
