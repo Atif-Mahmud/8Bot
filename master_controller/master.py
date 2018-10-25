@@ -16,9 +16,14 @@ def on_connect(client, userdata, flags, rc):
     # Environment Subscription
     client.subscribe("CV_NODE/ENVIRONMENT")
 
+    # UI Subscription
+    client.subscribe("UI_NODE/COMMANDS")
+
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     if (msg.topic == "CV_NODE/ENVIRONMENT"):
+        print(msg.payload.decode("utf-8"))
+    elif (msg.topic == "UI_NODE/COMMANDS"):
         print(msg.payload.decode("utf-8"))
     else:
         print("ERROR: unhandled mqtt topic")
