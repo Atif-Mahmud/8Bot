@@ -3,39 +3,42 @@ from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
 import os
 
-# The callback for when the client receives a CONNACK response from the server.
-def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
+class MasterController (mqtt.Client):
+    def __init__(self, host=None, port=None):
+        self.connect(host or os.getenv("HOST"), port or int(os.getenv("PORT")), 60)
 
-    # Subscribing in on_connect() means that if we lose the connection and
-    # reconnect then subscriptions will be renewed.
+    def run(self):
+        # Blocking call that processes network traffic, dispatches callbacks and
+        # handles reconnecting.
+        # Other loop*() functions are available that give a threaded interface and a
+        # manual interface.
+        self.loop_forever()
 
-    # System Subscription
-    #client.subscribe("$SYS/#")
+    # The callback for when the client receives a CONNACK response from the server.
+    def on_connect(self, client, userdata, flags, rc):
+        print("Connected with result code", rc)
 
-    # Environment Subscription
-    client.subscribe("CV_NODE/ENVIRONMENT")
+        # Subscribing in on_connect() means that if we lose the connection and
+        # reconnect then subscriptions will be renewed.
 
-    # UI Subscription
-    client.subscribe("UI_NODE/COMMANDS")
+        # System Subscription
+        #client.subscribe("$SYS/#")
 
-# The callback for when a PUBLISH message is received from the server.
-def on_message(client, userdata, msg):
-    if (msg.topic == "CV_NODE/ENVIRONMENT"):
-        print(msg.payload.decode("utf-8"))
-    elif (msg.topic == "UI_NODE/COMMANDS"):
-        print(msg.payload.decode("utf-8"))
-    else:
-        print("ERROR: unhandled mqtt topic")
+        # Environment Subscription
+        client.subscribe("CV_NODE/ENVIRONMENT")
 
-client = mqtt.Client()
-client.on_connect = on_connect
-client.on_message = on_message
+        # UI Subscription
+        client.subscribe("UI_NODE/COMMANDS")
 
-client.connect(os.getenv("HOST"), int(os.getenv("PORT")), 60)
+    # The callback for when a PUBLISH message is received from the server.
+    def on_message(self, client, userdata, msg):
+        if (msg.topic == "CV_NODE/ENVIRONMENT"):
+            print(msg.payload.decode("utf-8"))
+        elif (msg.topic == "UI_NODE/COMMANDS"):
+            print(msg.payload.decode("utf-8"))
+        else:
+            print("ERROR: unhandled mqtt topic")
 
-# Blocking call that processes network traffic, dispatches callbacks and
-# handles reconnecting.
-# Other loop*() functions are available that give a threaded interface and a
-# manual interface.
-client.loop_forever()
+client = MasterController()
+
+client.run()
