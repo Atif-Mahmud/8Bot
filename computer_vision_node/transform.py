@@ -38,6 +38,7 @@ class PerspectiveTransform:
 	def __str__(self):
 		return str(self.matrix)
 
+
 def getPerspectiveTransform(src_img, src_points, output_shape):
 	"""Gets the transform matrix that will map the 4 points `src_points` to the four corners of a flat plane of shape `output_shape`.
 	
@@ -63,3 +64,28 @@ def getPerspectiveTransform(src_img, src_points, output_shape):
 	matrix = cv2.getPerspectiveTransform(src, dst)
 
 	return PerspectiveTransform(matrix, output_shape)
+
+
+def _fourCorners(*args):
+	"""Returns an `numpy.ndarray` of the four corners of an axis-aligned box.
+	
+	Args:
+	    *args: One or two iterables of length 2:
+	        * If given one argument `(x, y)`, The box has one corner at `(0, 0)` and the other at `(x, y)`.
+	        * If given two arguments `(x1, y1)`, `(x2, y2)`, The box has one corner at `(x1, y1)` and the other at `(x2, y2)`.
+	"""
+	if len(args) == 1:
+		a = (0, 0)
+		b = args[0]
+	elif len(args) == 2:
+		a = args[0]
+		b = args[1]
+	else:
+		raise TypeError("Expected 1 or 2 arguments (%d given)" %len(args))
+
+	return np.array((
+		(a[0], a[1]),
+		(a[0], b[1]),
+		(b[0], b[1]),
+		(b[0], a[1])
+		), dtype=np.float32)
