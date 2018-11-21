@@ -12,6 +12,15 @@
 
 #define SOLENOID  3
 
+#define SOLENOID_DURATION 250
+
+#define GET_BIT(c, bit) (c >> bit & 1)
+
+int solenoid_timer = 0;
+
+char command = 0;
+char data = 0;
+
 void setup() {
   pinMode(EN_12, OUTPUT);
   pinMode(M1_F, OUTPUT);
@@ -27,41 +36,44 @@ void setup() {
 
   digitalWrite(EN_12, HIGH);
   digitalWrite(EN_34, HIGH);
+
+  Serial.print("8bot");
 }
 
 void loop() {
-  digitalWrite(M1_F, HIGH);
-  digitalWrite(M2_F, HIGH);
-  digitalWrite(M3_F, HIGH);
-  digitalWrite(M4_F, HIGH);
-  digitalWrite(M1_B, LOW);
-  digitalWrite(M2_B, LOW);
-  digitalWrite(M3_B, LOW);
-  digitalWrite(M4_B, LOW);
-  digitalWrite(13, HIGH);
+  if (Serial.available()) {
+    if (command == 0) {
+      command = Serial.read();
+    }
+    else {
+      data = Serial.read();
 
-  delay(1000);
+      if (command == 'M') {
+        digitalWrite(M1_F, GET_BIT(data, 7));
+        digitalWrite(M1_B, GET_BIT(data, 6));
+        digitalWrite(M2_F, GET_BIT(data, 5));
+        digitalWrite(M2_B, GET_BIT(data, 4));
+        digitalWrite(M3_F, GET_BIT(data, 3));
+        digitalWrite(M3_B, GET_BIT(data, 2));
+        digitalWrite(M4_F, GET_BIT(data, 1));
+        digitalWrite(M4_B, GET_BIT(data, 0));
+      }
+      else if (command == 'A') {
+        analogWrite(EN_12, data);
+      }
+      else if (command == 'B') {
+        analogWrite(EN_34, data);
+      }
+      else if (command == 'S') {
+        solenoid_timer = SOLENOID_DURATION;
+        digitalWrite(SOLENOID, HIGH);
+      }
+    }
+    command = 0;
+  }
 
-  digitalWrite(M1_F, LOW);
-  digitalWrite(M2_F, LOW);
-  digitalWrite(M3_F, LOW);
-  digitalWrite(M4_F, LOW);
-  digitalWrite(M1_B, HIGH);
-  digitalWrite(M2_B, HIGH);
-  digitalWrite(M3_B, HIGH);
-  digitalWrite(M4_B, HIGH);
-  digitalWrite(13, LOW);
+  if (solenoid_timer > 0) solenoid_timer--;
+  else digitalWrite(SOLENOID, LOW);
 
-  delay(1000);
-
-  digitalWrite(M1_F, LOW);
-  digitalWrite(M2_F, LOW);
-  digitalWrite(M3_F, LOW);
-  digitalWrite(M4_F, LOW);
-  digitalWrite(M1_B, LOW);
-  digitalWrite(M2_B, LOW);
-  digitalWrite(M3_B, LOW);
-  digitalWrite(M4_B, LOW);
-
-  delay(1000);
+  delay(1);
 }
