@@ -1,0 +1,45 @@
+# before_script:
+#   - apt-get update -qq && apt-get install -y -qq python3-pip python-opencv mosquitto
+#   - pip3 install numpy
+#   - pip3 install -U python-dotenv
+#   - pip3 install paho-mqtt
+#
+# preliminary_test:
+#   - chmod +x mqtt_broker start_broker.sh
+#   - mqtt_broker/start_broker.sh
+#   - python3 master_controller/master.py
+#   - computer_vision_node/cv_publisher.py
+
+image: trion/ng-cli-karma
+
+cache:
+  paths:
+    - ui_node/eightbot/node_modules/
+
+deploy_stage:
+  stage: deploy
+  environment: Stage
+  only:
+    - development
+  script:
+    - cd ui_node/eightbot/
+    - rm package-lock.json
+    - npm install
+    - ./node_modules/@angular/cli/bin/ng test --progress false --watch=false
+    - ./node_modules/@angular/cli/bin/ng e2e
+    - ./node_modules/@angular/cli/bin/ng build --progress false --prod --base-href eightbot-stage.surge.sh
+    - ./node_modules/.bin/surge -p dist/eightbot/ --domain eightbot-stage.surge.sh
+
+deploy_production:
+  stage: deploy
+  environment: Production
+  only:
+    - tags
+  script:
+    - cd ui_node/eightbot
+    - rm ./package-lock.json
+    - npm install
+    - ./node_modules/@angular/cli/bin/ng test --progress false --single-run=true  --watch=false
+    - ./node_modules/@angular/cli/bin/ng e2e --progress false --watch=false
+    - ./node_modules/@angular/cli/bin/ng build --progress false --prod --base-href eightbot.surge.sh
+    - ./node_modules/.bin/surge -p dist/eightbot --domain eightbot.surge.sh
