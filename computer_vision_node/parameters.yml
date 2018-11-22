@@ -1,0 +1,11 @@
+calibration_detector:
+  preprocessing:
+    block_radius: 50
+    c: 20
+  pattern:
+    path: img/calibration_320.png
+    scale: 0.15
+    color: False
+  detector:
+    match_threshold: 0.35
+    clustering_bandwidth: 40
