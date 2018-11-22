@@ -37,21 +37,26 @@ def calibrate(img, params):
 	    numpy.ndarray: Transformed image, of the shape (tray.height, tray.width, 3) for color images, or (tray.height, tray.width) for grayscale images.
 	"""
 	pattern = loadImage(**params.calibration_detector.pattern)
-
 	# First, pass both the image and the pattern through an adaptiveThreshold filter.
 	detector_img = adaptiveThreshold(img, **params.calibration_detector.preprocessing)
 	pattern = adaptiveThreshold(pattern, **params.calibration_detector.preprocessing)
 
+	print("Detecting calibration points")
+	print(params.calibration_detector.detector)
 	# Detect calibration points.
 	detector = CalibrationDetector(**params.calibration_detector.detector)
 	result = detector.detect(detector_img, pattern)
 
 	# Assuming at least 4 calibration points found...
-	if len(result) < 4:
+	if len(result) != 4:
 		logging.error("Only found %d out of 4 required calibration points." %(len(result)))
 		return
+	else:
+		print("YAY")
 
 	# PerspectiveTransform the image and return.
+
+	print(result[:4])
 	transform = getPerspectiveTransform(img, result[:4], (int(os.getenv("HEIGHT")), int(os.getenv("WIDTH"))))
 	
 	return transform

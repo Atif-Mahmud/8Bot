@@ -63,6 +63,9 @@ class CalibrationDetector:
 		match_map = cv2.matchTemplate(img, pattern, self.match_method) # Call the cv2 function that does the template matching.
 		candidates = np.transpose(np.where(match_map > self.match_threshold)) # Get all the matched points that were above the threshold.
 
+		cv2.imshow("match map", match_map)
+		cv2.waitKey()
+
 		# If there were no matches, warn and return None.
 		if 0 in candidates.shape:
 			logging.warning("0 matches detected")

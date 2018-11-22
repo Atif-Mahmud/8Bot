@@ -4,8 +4,8 @@ calibration_detector:
     c: 20
   pattern:
     path: img/calibration_320.png
-    scale: 0.25
+    scale: 0.15
     color: False
   detector:
-    match_threshold: 0.5
+    match_threshold: 0.35
     clustering_bandwidth: 40
