@@ -1,3 +1,6 @@
+#define DEBUG_ECHO
+
+
 #define EN_12 5
 #define M1_F  2
 #define M1_B  4
@@ -11,8 +14,9 @@
 #define M4_B  12
 
 #define SOLENOID  3
+#define LED  13
 
-#define SOLENOID_DURATION 250
+#define SOLENOID_DURATION 500 // ms
 
 #define GET_BIT(c, bit) (c >> bit & 1)
 
@@ -33,11 +37,13 @@ void setup() {
   pinMode(M4_F, OUTPUT);
   pinMode(M4_B, OUTPUT);
   pinMode(SOLENOID, OUTPUT);
+  pinMode(LED, OUTPUT);
 
   digitalWrite(EN_12, HIGH);
   digitalWrite(EN_34, HIGH);
 
-  Serial.print("8bot");
+  Serial.begin(9600);
+  Serial.println("8bot");
 }
 
 void loop() {
@@ -47,6 +53,12 @@ void loop() {
     }
     else {
       data = Serial.read();
+
+      #ifdef DEBUG_ECHO
+        Serial.print(command);
+        Serial.print(" ");
+        Serial.println(data);
+      #endif
 
       if (command == 'M') {
         digitalWrite(M1_F, GET_BIT(data, 7));
@@ -67,13 +79,14 @@ void loop() {
       else if (command == 'S') {
         solenoid_timer = SOLENOID_DURATION;
         digitalWrite(SOLENOID, HIGH);
+        digitalWrite(LED, HIGH);
       }
+      command = 0;
     }
-    command = 0;
   }
 
   if (solenoid_timer > 0) solenoid_timer--;
-  else digitalWrite(SOLENOID, LOW);
+  else {digitalWrite(SOLENOID, LOW); digitalWrite(LED, LOW);}
 
   delay(1);
 }
