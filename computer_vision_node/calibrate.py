@@ -56,7 +56,6 @@ def calibrate(img, params):
 
 	# PerspectiveTransform the image and return.
 
-	print(result[:4])
 	transform = getPerspectiveTransform(img, result[:4], (int(os.getenv("HEIGHT")), int(os.getenv("WIDTH"))))
 	
 	return transform

@@ -79,5 +79,7 @@ class CalibrationDetector:
 		labels = self._clusterer.labels_
 		matches = self._bestMatches(match_map, candidates, labels)
 
+		#TODO (Ethan): Sort matches in descending score order
+
 		# Encapsulate and return.
 		return CalibrationDetectorResult(matches, match_map, pattern)
