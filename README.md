@@ -6,6 +6,8 @@
     <br>
 </h1>
 
+![Alt Text](./ezgif-4-f56a8f315cc4.gif)
+
 <h4 align="center">Autonomous Pool Robot using Computer Vision</h4>
 
 <h5 align="center">By: Atif Mahmud and Ethan Guo</h5>
